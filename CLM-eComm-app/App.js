@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   },
   Image:{
     width:350,
-    // height:300
+    height:300
   },
   text:{
     fontSize:15,
