@@ -1,17 +1,21 @@
 import React, {useState} from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { useForm } from "react-hook-form";
 
 //Inpust 
 import CustomInput from '../../components/CustomInputs/CustomInput';
 import CustomButton from '../../components/CustomButtons/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
+const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+
 const ConfirmEmailScreen = () => {
-    const [code, setCode] = useState('');
-    const navigation = useNavigation();
+  const {control, handleSubmit, watch} = useForm();
+  const navigation = useNavigation();
 
 
-    const onConfirmPressed = () => {
+    const onConfirmPressed = (data) => {
+      console.warn(data)
       navigation.navigate('Home')
     }
     const onSignInPress = () => {
@@ -27,14 +31,21 @@ const ConfirmEmailScreen = () => {
           <View style={styles.root}>
               <Text style={styles.title}>Confirm your email</Text>
               <CustomInput
-                placeholder="Enter your confirmation code" 
-                value={code} 
-                setValue={setCode} 
+                name="email"
+                placeholder="Email" 
+                control={control}
+                rules={{
+                  required: 'Email is required',
+                  pattern: {
+                    value:EMAIL_REGEX, 
+                    message: 'Email is invalid'
+                  },
+                }}
               />
 
               <CustomButton 
                 text="Confirm" 
-                onPress={onConfirmPressed} 
+                onPress={handleSubmit(onConfirmPressed)} 
               />
               <CustomButton 
                 text="Resend code"

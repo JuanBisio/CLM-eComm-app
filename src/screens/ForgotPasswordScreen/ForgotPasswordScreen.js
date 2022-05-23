@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { useForm } from "react-hook-form";
 
 //Inpust 
 import CustomInput from '../../components/CustomInputs/CustomInput';
@@ -7,11 +8,11 @@ import CustomButton from '../../components/CustomButtons/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
 const ForgotPasswordScreen = () => {
-    const [username, setUsername] = useState('');
     const navigation = useNavigation();
+    const {control, handleSubmit, watch} = useForm();
 
-
-    const onSendPressed = () => {
+    const onSendPressed = (data) => {
+      console.warn(data)
       navigation.navigate('NewPassword')
     }
     const onSignInPress = () => {
@@ -25,14 +26,15 @@ const ForgotPasswordScreen = () => {
           <View style={styles.root}>
               <Text style={styles.title}>Reset your password</Text>
               <CustomInput
+                name="username"
                 placeholder="Username" 
-                value={username} 
-                setValue={setUsername} 
+                control={control}
+                rules={{required: 'Username is required'}}
               />
 
               <CustomButton 
                 text="Send" 
-                onPress={onSendPressed} 
+                onPress={handleSubmit(onSendPressed)} 
               />
               <CustomButton 
                 text="Back to Sign In"

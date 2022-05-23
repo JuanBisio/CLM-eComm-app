@@ -1,0 +1,8 @@
+{
+    "editor.cursorStyle": "line",
+    "editor.wordWrap": "off",
+    "editor.autoClosingBrackets": "languageDefined",
+    "editor.autoClosingDelete": "always",
+    "editor.autoClosingOvertype": "always",
+    "editor.bracketPairColorization.independentColorPoolPerBracketType": false
+}

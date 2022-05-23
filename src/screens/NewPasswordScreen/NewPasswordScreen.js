@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { useForm } from "react-hook-form";
 
 //Inpust 
 import CustomInput from '../../components/CustomInputs/CustomInput';
@@ -7,12 +8,11 @@ import CustomButton from '../../components/CustomButtons/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
 const NewPasswordScreen = () => {
-    const [code, setCode] = useState('');
-    const [newPassword, setNewPassowrd] = useState('');
     const navigation = useNavigation();
-
+    const {control, handleSubmit, watch} = useForm();
     
-    const onSubmitPressed = () => {
+    const onSubmitPressed = (data) => {
+      console.warn(data)
       navigation.navigate('Home');
     }
     const onSignInPress = () => {
@@ -25,19 +25,28 @@ const NewPasswordScreen = () => {
           <View style={styles.root}>
               <Text style={styles.title}>Reset your password</Text>
               <CustomInput
+                name = "code"
+                control={control}
                 placeholder="Code" 
-                value={code} 
-                setValue={setCode} 
+                rules={{required: 'Code is required'}}
               />
               <CustomInput
-                placeholder="Enter your new password" 
-                value={newPassword} 
-                setValue={setNewPassowrd} 
+                name = "password"
+                placeholder="Enter your new password"
+                control={control}
+                secureTextEntry
+                rules={{
+                  required: 'Password is required',
+                  minLength: {
+                    value: 7, 
+                    message: 'Password should be at least 7 characters long',
+                  }
+                }}
               />
 
               <CustomButton 
                 text="Submit" 
-                onPress={onSubmitPressed} 
+                onPress={handleSubmit(onSubmitPressed)} 
               />
               <CustomButton 
                 text="Back to Sign In"
