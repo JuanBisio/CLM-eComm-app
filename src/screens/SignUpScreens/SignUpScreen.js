@@ -1,6 +1,7 @@
-import React, {useState} from 'react'
-import { StyleSheet, Text, View,Image, useWindowDimensions, ScrollView } from 'react-native';
+import React, {useContext, useState} from 'react'
+import { StyleSheet, Text, Alert, View,Image, useWindowDimensions, ScrollView } from 'react-native';
 import { useForm } from "react-hook-form";
+import {Auth} from 'aws-amplify';
 
 //Inpust
 import Logo from '../../../assets/image/02.png';
@@ -10,15 +11,31 @@ import CustomButton from '../../components/CustomButtons/CustomButton';
 import SocialSignInButton from '../../components/SocialSignInButtons';
 import { useNavigation } from '@react-navigation/native';
 
+
+// import { AuthContext } from '../../context/AuthContext';
+
 const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 const SignUpScreen = () => {
     const {height} = useWindowDimensions();
-    const navigation = useNavigation();
     const {control, handleSubmit, watch} = useForm();
     const pwd = watch('password')
+    const navigation = useNavigation();
 
-    const onRegisterPressed = () => {
-      navigation.navigate('ConfirmEmail')
+    const onRegisterPressed = async (data) => {
+      const {username, password, email, name} = data;
+      try{
+        const response = await Auth.signUp({
+          username,
+          password,
+          attributes: { email, name, preferred_username: username}
+        }); 
+
+        navigation.navigate('ConfirmEmail', {username})
+      }catch(e){
+          Alert.alet('oopss', e.message)
+        }
+      
+      
     }
     const onSignInPress = () => {
       navigation.navigate('SignIn')
@@ -39,6 +56,22 @@ const SignUpScreen = () => {
                 resizeMode= "contain"
               />
               <Text style={styles.title}>Create an account</Text>
+              <CustomInput
+                name="name"
+                placeholder="Name" 
+                control={control}
+                rules={{
+                  required: 'Name is required',
+                  minLength: {
+                    value: 3, 
+                    message: 'Name should be at least 3 characters long',
+                  },
+                  maxLength: {
+                    value: 20 , 
+                    message: 'Name should be max 20 characters long',
+                  }
+                }}
+              />
               <CustomInput
                 name="username"
                 placeholder="Username" 

@@ -1,29 +1,47 @@
 import React, {useState} from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, Alert, View, ScrollView } from 'react-native';
 import { useForm } from "react-hook-form";
+import {Auth} from 'aws-amplify';
 
 //Inpust 
 import CustomInput from '../../components/CustomInputs/CustomInput';
 import CustomButton from '../../components/CustomButtons/CustomButton';
 import { useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 
 const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 
 const ConfirmEmailScreen = () => {
-  const {control, handleSubmit, watch} = useForm();
+  const route = useRoute();
+  const {control, handleSubmit,watch} = useForm({
+    defaultValues: {username: route?.params?.username}
+  });
+
+  const username = watch('username');
+
   const navigation = useNavigation();
 
-
-    const onConfirmPressed = (data) => {
-      console.warn(data)
-      navigation.navigate('Home')
-    }
-    const onSignInPress = () => {
+  const onConfirmPressed = async data => {
+    try{
+      await Auth.confirmSignUp(data.username, data.code);
       navigation.navigate('SignIn')
+    }catch(e){
+      Alert.alert('Oopss', e.message);
     }
-    const onResendPress = () => {
-      console.warn('Aun no esta listo')
-    }
+  }
+
+  const onSignInPress = () => {
+    navigation.navigate('SignIn')
+  }
+
+  const onResendPress = async () => {
+    try{
+      await Auth.resendSignUp(username);
+      Alert.alert('Success', 'Code was resent to your email');
+    }catch(e){
+      Alert.alert('Oopss', e.message);
+    }  
+  }
 
 
     return (
@@ -31,15 +49,20 @@ const ConfirmEmailScreen = () => {
           <View style={styles.root}>
               <Text style={styles.title}>Confirm your email</Text>
               <CustomInput
-                name="email"
-                placeholder="Email" 
+                name="username"
+                placeholder="Username" 
                 control={control}
                 rules={{
-                  required: 'Email is required',
-                  pattern: {
-                    value:EMAIL_REGEX, 
-                    message: 'Email is invalid'
-                  },
+                  required: 'Username is required',
+                }}
+              />
+              <CustomInput
+                name="code"
+                placeholder="Code" 
+                control={control}
+                rules={{
+                  required: 'Code is required',
+                  
                 }}
               />
 
