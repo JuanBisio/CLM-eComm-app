@@ -4,11 +4,11 @@
     "slug": "CLM-eComm-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/image/favicon.png",
+    "icon": "./assets/image/LogoCuadrado.png",
     "splash": {
-      "image": "./assets/image/favicon.png",
+      "image": "./assets/image/splash2.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -21,7 +21,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/image/favicon.png",
+        "foregroundImage": "./assets/image/splash2.png",
         "backgroundColor": "#FFFFFF"
       }
     },

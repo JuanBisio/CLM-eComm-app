@@ -1,19 +1,23 @@
 import React, {useState} from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
-
+import { StyleSheet, Text, View, ScrollView, Alert } from 'react-native';
+import { useForm } from "react-hook-form";
+import { Auth } from 'aws-amplify';
 //Inpust 
 import CustomInput from '../../components/CustomInputs/CustomInput';
 import CustomButton from '../../components/CustomButtons/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
 const NewPasswordScreen = () => {
-    const [code, setCode] = useState('');
-    const [newPassword, setNewPassowrd] = useState('');
     const navigation = useNavigation();
-
+    const {control, handleSubmit, watch} = useForm();
     
-    const onSubmitPressed = () => {
-      navigation.navigate('Home');
+    const onSubmitPressed = async data => {
+      try{
+        await Auth.forgotPasswordSubmit(data.username, data.code, data.password)
+        navigation.navigate('SignIn')
+      }catch(e){
+        Alert.alert('Oopss', e.message);
+      }  
     }
     const onSignInPress = () => {
       navigation.navigate('SignIn');
@@ -25,19 +29,34 @@ const NewPasswordScreen = () => {
           <View style={styles.root}>
               <Text style={styles.title}>Reset your password</Text>
               <CustomInput
-                placeholder="Code" 
-                value={code} 
-                setValue={setCode} 
+                name = "username"
+                control={control}
+                placeholder="Username" 
+                rules={{required: 'Username is required'}}
               />
               <CustomInput
-                placeholder="Enter your new password" 
-                value={newPassword} 
-                setValue={setNewPassowrd} 
+                name = "code"
+                control={control}
+                placeholder="Code" 
+                rules={{required: 'Code is required'}}
+              />
+              <CustomInput
+                name = "password"
+                placeholder="Enter your new password"
+                control={control}
+                secureTextEntry
+                rules={{
+                  required: 'Password is required',
+                  minLength: {
+                    value: 7, 
+                    message: 'Password should be at least 7 characters long',
+                  }
+                }}
               />
 
               <CustomButton 
                 text="Submit" 
-                onPress={onSubmitPressed} 
+                onPress={handleSubmit(onSubmitPressed)} 
               />
               <CustomButton 
                 text="Back to Sign In"
