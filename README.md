@@ -1,3 +1,2 @@
-Juan Bisio
- HOLA ESTO ES UNA PRUEBA 
+App desarrollada con react native (Sin terminar)
  
